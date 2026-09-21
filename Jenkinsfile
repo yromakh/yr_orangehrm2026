@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        ORANGEHRM_URL = 'http://localhost:8080/web/index.php/dashboard/index'
+    }
+
     stages {
 
         stage('Checkout') {
@@ -23,7 +27,15 @@ pipeline {
 
         stage('Run tests') {
             steps {
-                bat 'python -m pytest --html=reports/report.html --self-contained-html'
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'orangehrm-credentials',
+                        usernameVariable: 'ORANGEHRM_USERNAME',
+                        passwordVariable: 'ORANGEHRM_PASSWORD'
+                    )
+                ]){                
+                    bat 'python -m pytest --html=reports/report.html --self-contained-html'
+                }
             }
         }
     }
