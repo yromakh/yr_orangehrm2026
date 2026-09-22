@@ -12,6 +12,7 @@ __pycache__/
 
 # HTML reports
 reports/
+test-results/
 
 # IDE
 .vscode/
