@@ -10,7 +10,8 @@ def test_login_opens_dashboard(authenticated_context: dict[str, Any]):
     api_utils = TestApiUtils()
     dashboard_response = api_utils.open_dashboard(authenticated_context)
     assert dashboard_response.url.endswith("/dashboard/index")
-    
+
+@pytest.mark.api   
 def test_open_pim_page(authenticated_context: dict[str, Any]):
     api_utils = TestApiUtils()
     pim_response = api_utils.open_pim_page(authenticated_context)
@@ -22,7 +23,8 @@ def test_open_pim_page(authenticated_context: dict[str, Any]):
     # TODO: in process
     # pim_save_employee_response = api_utils.open_pim_save_employee_page(authenticated_context)
     # assert pim_save_employee_response.url.endswith("/pim/saveEmployee")
-    
+
+@pytest.mark.api   
 def test_add_employee(authenticated_context: dict[str, Any]):
     api_utils = TestApiUtils()
     admin_response = api_utils.open_admin_page(authenticated_context)
