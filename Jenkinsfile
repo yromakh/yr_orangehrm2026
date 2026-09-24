@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        ORANGEHRM_URL = 'http://localhost:8080/web/index.php/dashboard/index'
+        ORANGEHRM_URL = 'http://localhost:8080/web/index.php/'
     }
 
     stages {
