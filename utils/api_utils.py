@@ -1,4 +1,8 @@
+from typing import Dict
+
+from httperrors import BadRequestError
 import os
+import random
 import time
 from playwright.sync_api import APIRequestContext, APIResponse, sync_playwright
 
@@ -108,43 +112,94 @@ class TestApiUtils:
             "api_request_context"
         ]
 
-        # Get add employee page
+        # Get Add Employee page
         add_employee_response: APIResponse = api_request_context.get(
             "/web/index.php/pim/addEmployee", max_redirects=0
         )
         print("\nADD EMPLOYEE page STATUS:", add_employee_response.status)
         print("ADD EMPLOYEE URL:", add_employee_response.url)
-
-
         assert add_employee_response.ok
 
         return add_employee_response
 
-    # TODO: in process
-    # def open_pim_save_employee_page(self, authenticated_context):
-    #     self.login(authenticated_context)
 
-    #     api_request_context: APIRequestContext = authenticated_context[
-    #         "api_request_context"
-    #     ]
+    def save_pim_employee(self, authenticated_context) -> tuple[APIResponse, str]:
+        try:
+            self.login(authenticated_context)
 
-    #     new_employee = {
-    #             "empNumber": 7,
-    #             "lastName": "House",
-    #             "firstName": "Hue",
-    #             "middleName": "",
-    #             "employeeId": "0004",
-    #             "terminationId": None,
-    #         }
+            api_request_context: APIRequestContext = authenticated_context[
+                "api_request_context"
+            ]
+
+            # Save Employee data
+            empNumber = f"0{random.randint(100, 999)}"
+            # empNumber = "0015"
+            employee_params: Dict[str, str | float | bool] = {
+                "value": empNumber,
+                "entityName": "Employee",
+                "attributeName": "employeeId",
+            }
+            # Get unique request to validate the employee data before saving
+            validate_employee_response: APIResponse = api_request_context.get(
+                "/web/index.php/api/v2/core/validation/unique", params=employee_params
+            )
+            if not validate_employee_response.ok:
+                raise BadRequestError(
+                    f"Failed to validate employee with empNumber {empNumber}. "
+                    f"Status code: {validate_employee_response.status}, "
+                    f"Response: {validate_employee_response.text()}"
+                )
+            assert validate_employee_response.ok
+
+            # Post save employee page
+            new_employee = {
+                "empPicture": None,
+                "employeeId": empNumber,
+                "lastName": "Wallas15",
+                "firstName": "William15",
+                "middleName": "bb",
+            }
+
+            save_employee_response: APIResponse = api_request_context.post(
+                "/web/index.php/api/v2/pim/employees",
+                data=new_employee,
+                max_redirects=0,
+                headers={"Content-Type": "application/json"},
+            )
+
+            print("\nSAVE EMPLOYEE page STATUS:", save_employee_response.status)
+            if not save_employee_response.ok:
+                raise BadRequestError(
+                    f"Failed to save employee with empNumber {empNumber}. "
+                    f"Status code: {save_employee_response.status}, "
+                    f"Response: {save_employee_response.text()}"
+                )
+            assert save_employee_response.ok
+            # empNumber = save_employee_response.json()["data"]["empNumber"]
+
+            open_employee_details_response: APIResponse = api_request_context.get(
+                f"/web/index.php/pim/viewPersonalDetails/empNumber/{empNumber}",
+                max_redirects=0,
+            )
+            print(
+                "\nEMPLOYEE DETAILS page STATUS:", open_employee_details_response.status
+            )
+            if not open_employee_details_response.ok:
+                raise BadRequestError(
+                    f"Failed to open employee details page for empNumber {empNumber}. "
+                    f"Status code: {open_employee_details_response.status}, "
+                    f"Response: {open_employee_details_response.text()}"
+                )
+            assert open_employee_details_response.ok
+
+            return open_employee_details_response, empNumber
         
-    #     # Get save employee page
-    #     save_employee_response: APIResponse = api_request_context.post(
-    #         "/web/index.php/api/v2/pim/employees",
-    #         data=new_employee)
-        
-    #     print("\nSAVE EMPLOYEE page STATUS:", save_employee_response.status)
-    #     print("SAVE EMPLOYEE URL:", save_employee_response.url)
-
-    #     assert save_employee_response.ok
-
-    #     return save_employee_response
+        except BadRequestError as error:
+            print(f"BadRequestError error while reaching/creating PIM employee: {error}")
+            raise
+        except AssertionError as error:
+            print(f"Assertion error while saving PIM employee: {error}")
+            raise
+        except Exception as error:
+            print(f"Unexpected error while saving PIM employee: {error}")
+            raise
