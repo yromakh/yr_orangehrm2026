@@ -59,7 +59,7 @@ def authenticated_context(playwright):
     api_auth_context = playwright.request.new_context(base_url=local_URL)
     
     # Get login page
-    response = api_auth_context.get("auth/login")
+    response = api_auth_context.get("auth/login", max_redirects=0)
     assert response.ok
 
     soup = BeautifulSoup(response.text(), "html.parser")
