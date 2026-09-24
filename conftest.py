@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 import pytest
 import os
 from dotenv import load_dotenv
@@ -42,3 +43,33 @@ def login_to_site(page: Page, open_site):
         print(error)
     except Exception as error:
         print(f"Unexpected error while logging in: {error}")
+
+@pytest.fixture(scope="session")
+def authenticated_context(playwright):
+
+    if local_URL is None:
+        raise ValueError("ORANGEHRM_URL is not defined in .env file")
+
+    if not local_URL.strip():
+        raise ValueError("ORANGEHRM_URL is empty in .env file")
+
+    if not do_credentials_exist(local_user, local_pass):
+        raise ValueError("Username or password is not defined in .env file")
+
+    api_auth_context = playwright.request.new_context(base_url=local_URL)
+    
+    # Get login page
+    response = api_auth_context.get("auth/login")
+    assert response.ok
+
+    soup = BeautifulSoup(response.text(), "html.parser")
+    auth_login = soup.find("auth-login")
+    assert auth_login is not None, "auth-login element was not found"
+    
+    csrf_token = auth_login.get(":token")
+    assert csrf_token is not None, "CSRF token was not found"
+    
+    yield {"csrf_token": csrf_token, "api_request_context": api_auth_context}
+
+    api_auth_context.dispose()
+
