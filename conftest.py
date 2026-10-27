@@ -33,16 +33,16 @@ def open_site(page: Page):
 
 
 @pytest.fixture(scope="function")
-def login_to_site(page: Page, open_site):
+def login_to_site(open_site):
     try:
         if do_credentials_exist(local_user, local_pass):
-            login_page = LoginPage(page)
-            login_page.login(cast(str, local_user), cast(str, local_pass))
+            open_site.login(cast(str, local_user), cast(str, local_pass))
 
     except ValueError as error:
         print(error)
     except Exception as error:
         print(f"Unexpected error while logging in: {error}")
+
 
 @pytest.fixture(scope="session")
 def authenticated_context(playwright):
@@ -57,7 +57,7 @@ def authenticated_context(playwright):
         raise ValueError("Username or password is not defined in .env file")
 
     api_auth_context = playwright.request.new_context(base_url=local_URL)
-    
+
     # Get login page
     response = api_auth_context.get("auth/login", max_redirects=0)
     assert response.ok
@@ -65,11 +65,20 @@ def authenticated_context(playwright):
     soup = BeautifulSoup(response.text(), "html.parser")
     auth_login = soup.find("auth-login")
     assert auth_login is not None, "auth-login element was not found"
-    
+
     csrf_token = auth_login.get(":token")
     assert csrf_token is not None, "CSRF token was not found"
-    
+
+    login_response = api_auth_context.post(
+        "auth/validate",
+        data={
+            "_token": csrf_token,
+            "username": cast(str, local_user),
+            "password": cast(str, local_pass),
+        },
+    )
+    assert login_response.ok, "API login failed"
+
     yield {"csrf_token": csrf_token, "api_request_context": api_auth_context}
 
     api_auth_context.dispose()
-

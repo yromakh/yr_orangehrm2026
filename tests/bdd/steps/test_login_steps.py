@@ -1,5 +1,6 @@
 import pytest
 from pytest_bdd import given, scenarios, then, when, parsers
+from playwright.sync_api import expect
 from pages.orange_home_page import HomePage
 from typing import cast
 
@@ -52,19 +53,16 @@ def user_clicks_login_button(shared_data):
 @then("the user is redirected to the dashboard page")
 def user_on_dashboard_page(shared_data):
     home_page = shared_data["home_page"]
-    if home_page:
-        home_page.is_dashboard_label_visible()
+    expect(home_page.dashboard_label).to_be_visible()
 
 
 @then("error message is displayed about invalid credentials")
 def error_message_displayed(shared_data):
     login_page = shared_data["login_page"]
-    if login_page:
-        login_page.display_validation_message()
+    expect(login_page.validation_message).to_be_visible()
 
 
 @then("error message is displayed about empty fields")
 def error_message_displayed_for_empty_fields(shared_data):
     login_page = shared_data["login_page"]
-    if login_page:
-        login_page.display_empty_field_message()
+    expect(login_page.empty_field_message).to_be_visible()
