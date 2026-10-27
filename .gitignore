@@ -2,7 +2,7 @@
 .env
 
 # Virtual environment
-.venv/
+venv5/
 
 # Python cache
 __pycache__/
@@ -12,7 +12,11 @@ __pycache__/
 
 # HTML reports
 reports/
+reports/Jenkins-reports/
 test-results/
 
-# IDE
+# IDE added files
 .vscode/
+
+# test data
+test_data/employee_list.csv
