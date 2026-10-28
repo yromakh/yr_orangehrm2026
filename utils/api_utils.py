@@ -116,9 +116,7 @@ class ApiUtils:
         try:
             # Save Employee data
             empNumber = self.get_new_employeeId()
-            
-            
-            
+        
             employee_params: Dict[str, str | float | bool] = {
                 "value": empNumber,
                 "entityName": "Employee",
@@ -140,9 +138,9 @@ class ApiUtils:
             new_employee = {
                 "empPicture": None,
                 "employeeId": empNumber,
-                "lastName": "Wallas15",
-                "firstName": "William15",
-                "middleName": "bb",
+                "lastName": f"Wallas{random.randint(1, 1000)}",
+                "firstName": f"William{random.randint(1, 1000)}",
+                "middleName": "ww",
             }
 
             save_employee_response: APIResponse = self.api_request_context.post(

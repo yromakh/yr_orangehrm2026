@@ -9,7 +9,7 @@ Feature: Login to OrangeHRM
 
         Examples:
             | username | password     |
-            | Admin    | UBy5^!9=)l6p |
+            | Admin    | admin123     |
 
     Scenario Outline: Unsuccessful login with invalid credentials
         Given the user is on the login page
@@ -20,7 +20,7 @@ Feature: Login to OrangeHRM
 
         Examples:
             | username | password     | invalid_username    | invalid_password       |
-            | Admin    | UBy5^!9=)l6p | Admin_incorrect123! | Incorrect_password123! |
+            | Admin    | admin123     | Admin_incorrect123! | Incorrect_password123! |
 
     Scenario: Unsuccessful login with empty fields
         Given the user is on the login page

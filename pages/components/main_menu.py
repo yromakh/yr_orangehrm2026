@@ -4,8 +4,10 @@ from playwright.sync_api import Page, expect
 class MainMenu:
     def __init__(self, page: Page):
         self.page = page
-        self.menu_list = page.locator("ul.oxd-main-menu")
-        self.toggle_button = page.locator(".oxd-icon-button.oxd-main-menu-button")
+        self.menu_list = page.locator("xpath=//ul[@class='oxd-main-menu']")
+        self.toggle_button = page.locator(
+            "xpath=//button[@class='oxd-icon-button oxd-main-menu-button']"
+        )
         self.admin_link = page.get_by_role("link", name="Admin")
         self.pim_link = page.get_by_role("link", name="PIM")
 
@@ -17,4 +19,3 @@ class MainMenu:
 
     def open_pim(self):
         self.pim_link.click()
-        

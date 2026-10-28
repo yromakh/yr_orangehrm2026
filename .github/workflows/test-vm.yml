@@ -1,8 +1,9 @@
 name: Test for VM
 
 on:
-  push:
-    branches: [main, github-actions]
+  workflow_dispatch
+  # push:
+  #   branches: [main, github-actions]
 
 env:
     ORANGEHRM_USERNAME: ${{ secrets.ORANGEHRM_USERNAME }}
