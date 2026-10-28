@@ -7,14 +7,14 @@ import os
 from typing import cast
 from utils.login_helper import do_credentials_exist
 
-local_user = os.getenv("ORANGEHRM_USERNAME")
-local_pass = os.getenv("ORANGEHRM_PASSWORD")
+ORANGEHRM_USERNAME = os.getenv("ORANGEHRM_USERNAME")
+ORANGEHRM_PASSWORD = os.getenv("ORANGEHRM_PASSWORD")
 
 
 @pytest.fixture(scope="module")
 def credentials() -> tuple[str, str]:
-    do_credentials_exist(local_user, local_pass)
-    return cast(str, local_user), cast(str, local_pass)
+    do_credentials_exist(ORANGEHRM_USERNAME, ORANGEHRM_PASSWORD)
+    return cast(str, ORANGEHRM_USERNAME), cast(str, ORANGEHRM_PASSWORD)
 
 
 def test_show_loading_brand_at_login_page(open_site: LoginPage):
