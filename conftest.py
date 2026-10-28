@@ -9,21 +9,21 @@ from pages.orange_login_page import LoginPage
 
 load_dotenv()
 
-local_URL = os.getenv("ORANGEHRM_URL")
-local_user = os.getenv("ORANGEHRM_USERNAME")
-local_pass = os.getenv("ORANGEHRM_PASSWORD")
+ORANGEHRM_URL = os.getenv("ORANGEHRM_URL")
+ORANGEHRM_USERNAME = os.getenv("ORANGEHRM_USERNAME")
+ORANGEHRM_PASSWORD = os.getenv("ORANGEHRM_PASSWORD")
 
 
 @pytest.fixture(scope="function")
 def open_site(page: Page):
     try:
-        if local_URL is None:
+        if ORANGEHRM_URL is None:
             raise ValueError("ORANGEHRM_URL is not defined in .env file")
 
-        if not local_URL.strip():
+        if not ORANGEHRM_URL.strip():
             raise ValueError("ORANGEHRM_URL is empty in .env file")
 
-        page.goto(local_URL)
+        page.goto(ORANGEHRM_URL)
     except ValueError as error:
         print(error)
     except Exception as error:
@@ -35,8 +35,8 @@ def open_site(page: Page):
 @pytest.fixture(scope="function")
 def login_to_site(open_site):
     try:
-        if do_credentials_exist(local_user, local_pass):
-            open_site.login(cast(str, local_user), cast(str, local_pass))
+        if do_credentials_exist(ORANGEHRM_USERNAME, ORANGEHRM_PASSWORD):
+            open_site.login(cast(str, ORANGEHRM_USERNAME), cast(str, ORANGEHRM_PASSWORD))
 
     except ValueError as error:
         print(error)
@@ -47,19 +47,22 @@ def login_to_site(open_site):
 @pytest.fixture(scope="session")
 def authenticated_context(playwright):
 
-    if local_URL is None:
+    if ORANGEHRM_URL is None:
         raise ValueError("ORANGEHRM_URL is not defined in .env file")
 
-    if not local_URL.strip():
+    if not ORANGEHRM_URL.strip():
         raise ValueError("ORANGEHRM_URL is empty in .env file")
 
-    if not do_credentials_exist(local_user, local_pass):
+    if not do_credentials_exist(ORANGEHRM_USERNAME, ORANGEHRM_PASSWORD):
         raise ValueError("Username or password is not defined in .env file")
 
-    api_auth_context = playwright.request.new_context(base_url=local_URL)
+    api_auth_context = playwright.request.new_context(base_url=ORANGEHRM_URL)
 
     # Get login page
-    response = api_auth_context.get("auth/login", max_redirects=0)
+    response = api_auth_context.get(
+        f"{ORANGEHRM_URL.rstrip('/')}/auth/login",
+        max_redirects=0,
+    )
     assert response.ok
 
     soup = BeautifulSoup(response.text(), "html.parser")
@@ -73,8 +76,8 @@ def authenticated_context(playwright):
         "auth/validate",
         data={
             "_token": csrf_token,
-            "username": cast(str, local_user),
-            "password": cast(str, local_pass),
+            "username": cast(str, ORANGEHRM_USERNAME),
+            "password": cast(str, ORANGEHRM_PASSWORD),
         },
     )
     assert login_response.ok, "API login failed"
