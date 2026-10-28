@@ -5,9 +5,9 @@ on:
     branches: [main, github-actions]
 
 env:
-    HTTP_USERNAME: ${{ secrets.HTTP_USERNAME }}
+    ORANGEHRM_USERNAME: ${{ secrets.ORANGEHRM_USERNAME }}
     ORANGEHRM_PASSWORD: ${{ secrets.ORANGEHRM_PASSWORD }}
-    ORANGEHRM_URL: ${{ var.ORANGEHRM_URL }}
+    ORANGEHRM_URL: ${{ vars.ORANGEHRM_URL }}
 
 jobs:
   test:
