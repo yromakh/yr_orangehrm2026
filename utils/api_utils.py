@@ -116,9 +116,7 @@ class ApiUtils:
         try:
             # Save Employee data
             empNumber = self.get_new_employeeId()
-            
-            
-            
+        
             employee_params: Dict[str, str | float | bool] = {
                 "value": empNumber,
                 "entityName": "Employee",
