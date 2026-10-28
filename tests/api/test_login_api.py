@@ -70,7 +70,6 @@ def test_save_employee_using_data_from_file(employee: EmployeeTst):
 @pytest.mark.api
 @pytest.mark.order(2)
 @pytest.mark.dependency(depends=["save_employee_with_IDs_more_than_100"])
-@pytest.mark.skip(reason="Skipping deletion of employees with IDs more than 100")
 def test_delete_employees_with_IDs_more_than_100():
     deletedResponse = api_utils.delete_employees_with_IDs_more_than_100()
     assert deletedResponse is not None and deletedResponse.ok
