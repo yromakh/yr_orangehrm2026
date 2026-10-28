@@ -7,7 +7,7 @@ on:
 env:
     HTTP_USERNAME: ${{ secrets.HTTP_USERNAME }}
     ORANGEHRM_PASSWORD: ${{ secrets.ORANGEHRM_PASSWORD }}
-    ORANGEHRM_URL: ${{ secrets.ORANGEHRM_URL }}
+    ORANGEHRM_URL: ${{ var.ORANGEHRM_URL }}
 
 jobs:
   test:
