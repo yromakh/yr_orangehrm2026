@@ -26,19 +26,11 @@ def user_enters_valid_credentials(shared_data, username, password):
         login_page.enter_password(cast(str, password))
 
 
-@when(parsers.parse("the user enters {invalid_username} and valid {password}"))
-def user_enters_invalid_username(shared_data, invalid_username, password):
+@when(parsers.parse("the same user enters {invalid_username} and {invalid_password}"))
+def user_enters_not_valid_credentials(shared_data, invalid_username, invalid_password):
     login_page = shared_data["login_page"]
     if login_page:
         login_page.enter_username(cast(str, invalid_username))
-        login_page.enter_password(cast(str, password))
-
-
-@when(parsers.parse("the user enters valid {username} and {invalid_password}"))
-def user_enters_invalid_password(shared_data, username, invalid_password):
-    login_page = shared_data["login_page"]
-    if login_page:
-        login_page.enter_username(cast(str, username))
         login_page.enter_password(cast(str, invalid_password))
 
 
