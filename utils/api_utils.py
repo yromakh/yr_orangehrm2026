@@ -84,16 +84,31 @@ class ApiUtils:
         assert add_employee_response.ok
 
         return add_employee_response
-
-    def get_employees_Ids(self) -> list[str]:
+    
+    def get_employees_Ids(self, page_size: int = 50) -> list[str]:
         try:
-            load_employee_response: APIResponse = self.api_request_context.get(
-                "/web/index.php/api/v2/pim/employees", max_redirects=0
-            )
-            assert load_employee_response.ok
-            employee_list = load_employee_response.json()["data"]
-            employeeIds = [employee["employeeId"] for employee in employee_list]
-            return employeeIds
+            employee_ids: list[str] = []
+            offset = 0
+
+            while True:
+                load_employee_response: APIResponse = self.api_request_context.get(
+                    "/web/index.php/api/v2/pim/employees",
+                    params={"limit": str(page_size), "offset": str(offset)},
+                    max_redirects=0,
+                )
+                assert load_employee_response.ok, (
+                    f"{load_employee_response.status} {load_employee_response.text()}"
+                )
+                body = load_employee_response.json()
+                page = body["data"]
+                employee_ids.extend(employee["employeeId"] for employee in page)
+
+                offset += len(page)
+                total = body.get("meta", {}).get("total", 0)
+                if not page or offset >= total:
+                    break
+
+            return employee_ids
         except Exception as e:
             print(f"Failed to get employee IDs: {e}")
             return []
@@ -106,7 +121,7 @@ class ApiUtils:
                 if empId not in employeeIds:
                     return empId
   
-            empNumber = f"0{random.randint(100, 999)}"
+            empNumber = f"0{random.randint(1, 99999999)}"
             if len(employeeIds) == 0:
                 return empNumber
             elif empNumber not in employeeIds:
@@ -135,11 +150,12 @@ class ApiUtils:
             assert validate_employee_response.ok
 
             # Post save employee page
+            random_prefix = random.randint(1, 1000)
             new_employee = {
                 "empPicture": None,
                 "employeeId": empNumber,
-                "lastName": f"Wallas{random.randint(1, 1000)}",
-                "firstName": f"William{random.randint(1, 1000)}",
+                "lastName": f"Wallas{random_prefix}",
+                "firstName": f"William{random_prefix}",
                 "middleName": "ww",
             }
 
