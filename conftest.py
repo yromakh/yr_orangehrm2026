@@ -16,42 +16,30 @@ ORANGEHRM_PASSWORD = os.getenv("ORANGEHRM_PASSWORD")
 
 @pytest.fixture(scope="function")
 def open_site(page: Page):
-    try:
-        if ORANGEHRM_URL is None:
-            raise ValueError("ORANGEHRM_URL is not defined in .env file")
-
-        if not ORANGEHRM_URL.strip():
-            raise ValueError("ORANGEHRM_URL is empty in .env file")
-
-        page.goto(ORANGEHRM_URL)
-    except ValueError as error:
-        print(error)
-    except Exception as error:
-        print(f"Unexpected error while opening site: {error}")
-
+    if not ORANGEHRM_URL or not ORANGEHRM_URL.strip():
+        msg = "ORANGEHRM_URL is not defined or empty in .env file"
+        if os.getenv("CI"):
+            raise ValueError(msg)
+        pytest.skip(msg)
+    page.goto(ORANGEHRM_URL)
     return LoginPage(page)
 
 
 @pytest.fixture(scope="function")
-def login_to_site(open_site):
-    try:
-        if do_credentials_exist(ORANGEHRM_USERNAME, ORANGEHRM_PASSWORD):
-            open_site.login(cast(str, ORANGEHRM_USERNAME), cast(str, ORANGEHRM_PASSWORD))
-
-    except ValueError as error:
-        print(error)
-    except Exception as error:
-        print(f"Unexpected error while logging in: {error}")
+def login_to_site(open_site, page: Page):
+    if not do_credentials_exist(ORANGEHRM_USERNAME, ORANGEHRM_PASSWORD):
+        msg = "Username or password is not defined in .env file"
+        if os.getenv("CI"):
+            raise ValueError(msg)
+        pytest.skip(msg)
+    open_site.login(cast(str, ORANGEHRM_USERNAME), cast(str, ORANGEHRM_PASSWORD))
+    page.wait_for_url("**/dashboard/index", timeout=30000)
 
 
 @pytest.fixture(scope="session")
 def authenticated_context(playwright):
-
-    if ORANGEHRM_URL is None:
-        raise ValueError("ORANGEHRM_URL is not defined in .env file")
-
-    if not ORANGEHRM_URL.strip():
-        raise ValueError("ORANGEHRM_URL is empty in .env file")
+    if not ORANGEHRM_URL or not ORANGEHRM_URL.strip():
+        raise ValueError("ORANGEHRM_URL is not defined or empty in .env file")
 
     if not do_credentials_exist(ORANGEHRM_USERNAME, ORANGEHRM_PASSWORD):
         raise ValueError("Username or password is not defined in .env file")
