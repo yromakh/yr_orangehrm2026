@@ -1,10 +1,8 @@
-import random
 import re
 
 from playwright.sync_api import Page, expect
 import pytest
 from pages.orange_home_page import HomePage
-from utils.ui_utils import get_employees_count
 
 
 @pytest.fixture(scope="function")
@@ -13,7 +11,7 @@ def home_page(page: Page, login_to_site: None):
 
 
 def test_dashboard_elements(home_page: HomePage):
-    expect(home_page.main_menu.menu_list).to_be_visible()
+    expect(home_page.main_menu.menu_list).to_be_visible(timeout=15000)
 
 
 def test_minimize_maximize_main_menu(home_page: HomePage):

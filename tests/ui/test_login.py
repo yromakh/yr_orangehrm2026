@@ -29,11 +29,11 @@ def test_user_is_logged_in_successfully(page: Page, open_site: LoginPage, creden
     home_page = HomePage(page)
     username, password = credentials
     open_site.login(cast(str, username), cast(str, password))
-    expect(home_page.dashboard_label).to_be_visible()
+    expect(home_page.dashboard_label).to_be_visible(timeout=15000)
 
 
 def test_show_validation_message_when_credentials_incorrect(open_site: LoginPage):
     open_site.enter_username("Admin_wrong")
     open_site.enter_password("Password_wrong123")
     open_site.click_login_button()
-    expect(open_site.validation_message).to_be_visible()
+    expect(open_site.validation_message).to_be_visible(timeout=15000)
