@@ -84,19 +84,6 @@ class ApiUtils:
         assert add_employee_response.ok
 
         return add_employee_response
-
-    # def get_employees_Ids(self) -> list[str]:
-    #     try:
-    #         load_employee_response: APIResponse = self.api_request_context.get(
-    #             "/web/index.php/api/v2/pim/employees", max_redirects=0
-    #         )
-    #         assert load_employee_response.ok
-    #         employee_list = load_employee_response.json()["data"]
-    #         employeeIds = [employee["employeeId"] for employee in employee_list]
-    #         return employeeIds
-    #     except Exception as e:
-    #         print(f"Failed to get employee IDs: {e}")
-    #         return []
     
     def get_employees_Ids(self, page_size: int = 50) -> list[str]:
         try:
