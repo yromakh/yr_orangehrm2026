@@ -8,7 +8,9 @@ from utils.ui_utils import get_employees_count
 class HomePage(AuthenticatedPage):
     def __init__(self, page: Page):
         super().__init__(page)
-        self.dashboard_label = page.get_by_role("heading", name="Dashboard")
+        self.dashboard_label = page.locator(
+            "xpath=//div[contains(@class, 'oxd-topbar-header-title')]"
+        )
         self.orange_hrm_banner = page.locator(".oxd-brand-banner")
         self.admin_heading = page.locator(".oxd-topbar-header-title")
         self.pim_heading = page.get_by_role("heading", name="PIM")
@@ -37,10 +39,6 @@ class HomePage(AuthenticatedPage):
         self.success_message = page.get_by_text("Successfully Updated")
 
     def select_employee(self) -> None:
-        # employees_count = get_employees_count(self.page)
-        # assert employees_count > 0
-
-        # random_employee_index = random.randint(0, employees_count - 1)
         random_employee_index = random.randint(0, 50)
         self.edit_employee_icon.nth(random_employee_index).click()
 
