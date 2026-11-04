@@ -18,20 +18,12 @@ def user_is_on_login_page(open_site, shared_data):
     shared_data["login_page"] = login_page
 
 
-@when(parsers.parse("the user enters valid {username} and {password}"))
+@when(parsers.re(r"the user enters (?P<username>.*?) and (?P<password>.*)"))
 def user_enters_valid_credentials(shared_data, username, password):
     login_page = shared_data["login_page"]
     if login_page:
         login_page.enter_username(cast(str, username))
         login_page.enter_password(cast(str, password))
-
-
-@when(parsers.parse("the same user enters {invalid_username} and {invalid_password}"))
-def user_enters_not_valid_credentials(shared_data, invalid_username, invalid_password):
-    login_page = shared_data["login_page"]
-    if login_page:
-        login_page.enter_username(cast(str, invalid_username))
-        login_page.enter_password(cast(str, invalid_password))
 
 
 @when("the user clicks the login button")
@@ -48,13 +40,7 @@ def user_on_dashboard_page(shared_data):
     expect(home_page.dashboard_label).to_be_visible()
 
 
-@then("error message is displayed about invalid credentials")
-def error_message_displayed(shared_data):
+@then(parsers.parse("error message is displayed {error}"))
+def error_message_displayed(shared_data, error):
     login_page = shared_data["login_page"]
-    expect(login_page.validation_message).to_be_visible()
-
-
-@then("error message is displayed about empty fields")
-def error_message_displayed_for_empty_fields(shared_data):
-    login_page = shared_data["login_page"]
-    expect(login_page.empty_field_message).to_be_visible()
+    expect(login_page.page.get_by_text(error, exact=True).first).to_be_visible()

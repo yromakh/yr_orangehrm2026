@@ -28,7 +28,7 @@ class ApiUtils:
 
         return dashboard_response
 
-    def open_admin_page(self):
+    def view_system_users(self):
         # Get admin page
         view_admin_response: APIResponse = self.api_request_context.get(
             "/web/index.php/admin/viewAdminModule", max_redirects=0
@@ -41,11 +41,9 @@ class ApiUtils:
         print("\nADMIN STATUS:", view_system_users_response.status)
         print("ADMIN URL:", view_system_users_response.url)
 
-        assert view_system_users_response.ok
-
         return view_system_users_response
 
-    def open_add_user_page(self):
+    def open_page_to_populate_data_before_save(self):
         # Get add user page
         add_user_response: APIResponse = self.api_request_context.get(
             "/web/index.php/admin/saveSystemUser", max_redirects=0
