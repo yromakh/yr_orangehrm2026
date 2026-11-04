@@ -44,11 +44,15 @@ def test_create_employee():
 
 
 @pytest.mark.api
-def test_open_admin_page_and_add_user():
-    admin_response = api_utils.open_admin_page()
+def test_open_page_to_view_system_user():
+    admin_response = api_utils.view_system_users()
+    assert admin_response.ok
     assert admin_response.url.endswith("/admin/viewSystemUsers")
 
-    add_user_response = api_utils.open_add_user_page()
+
+@pytest.mark.api
+def test_open_page_to_populate_data_before_save():
+    add_user_response = api_utils.open_page_to_populate_data_before_save()
     assert add_user_response.url.endswith("/admin/saveSystemUser")
     
 

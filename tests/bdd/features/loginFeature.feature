@@ -3,7 +3,7 @@ Feature: Login to OrangeHRM
 
     Scenario Outline: Successful login with valid credentials
         Given the user is on the login page
-        When the user enters valid <username> and <password>
+        When the user enters <username> and <password>
         And the user clicks the login button
         Then the user is redirected to the dashboard page
 
@@ -13,15 +13,12 @@ Feature: Login to OrangeHRM
 
     Scenario Outline: Unsuccessful login with invalid credentials
         Given the user is on the login page
-        When the same user enters <invalid_username> and <invalid_password>
+        When the user enters <username> and <password>
         And the user clicks the login button
-        Then error message is displayed about invalid credentials
+        Then error message is displayed <error>
 
         Examples:
-            | username | password | invalid_username    | invalid_password       |
-            | Admin    | admin123 | Admin_incorrect123! | Incorrect_password123! |
-
-    Scenario: Unsuccessful login with empty fields
-        Given the user is on the login page
-        When the user clicks the login button
-        Then error message is displayed about empty fields
+            | username            | password               | error               |
+            | Admin_incorrect123! | Incorrect_password123! | Invalid credentials |
+            | Admin               |                        | Required            |
+            |                     | admin123               | Required            |

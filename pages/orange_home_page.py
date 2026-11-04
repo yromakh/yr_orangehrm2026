@@ -10,10 +10,12 @@ class HomePage(AuthenticatedPage):
     def __init__(self, page: Page):
         super().__init__(page)
         self.dashboard_label = page.locator(
-            "xpath=//div[contains(@class, 'oxd-topbar-header-title')]"
+            "xpath=//div[@class='oxd-topbar-header-title']"
         )
-        self.orange_hrm_banner = page.locator(".oxd-brand-banner")
-        self.admin_heading = page.locator(".oxd-topbar-header-title")
+        self.orange_hrm_banner = page.locator("xpath=//div[@class='oxd-brand-banner']")
+        self.admin_heading = page.locator(
+            "xpath=//div[@class='oxd-topbar-header-title']"
+        )
         self.pim_heading = page.get_by_role("heading", name="PIM")
         self.edit_employee_icon = page.locator(
             "xpath=//i[@class='oxd-icon bi-pencil-fill']"

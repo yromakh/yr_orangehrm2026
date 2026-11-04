@@ -9,31 +9,30 @@ from pages.orange_home_page import HomePage
 def home_page(page: Page, login_to_site: None):
     return HomePage(page)
 
+def test_get_main_menu_list(home_page: HomePage):
+    home_page.toggle_main_menu()
+    expect(home_page.get_menu_list()).to_be_visible(timeout=15000)
 
-def test_dashboard_elements(home_page: HomePage):
-    expect(home_page.main_menu.menu_list).to_be_visible(timeout=15000)
 
-
-def test_minimize_maximize_main_menu(home_page: HomePage):
-    home_page.main_menu.toggle()
+def test_toggle_main_menu(home_page: HomePage):
+    home_page.toggle_main_menu()
     expect(home_page.orange_hrm_banner).not_to_be_visible()
 
-    home_page.main_menu.toggle()
+    home_page.toggle_main_menu()
     expect(home_page.orange_hrm_banner).to_be_visible()
 
 
 def test_main_menu_options_opening(home_page: HomePage):
-    home_page.main_menu.open_admin()
+    home_page.open_admin()
     expect(home_page.admin_heading).to_be_visible()
-
     expect(home_page.admin_heading).to_have_text(re.compile(r"Admin *"))
 
-    home_page.main_menu.open_pim()
+    home_page.open_pim()
     expect(home_page.pim_heading).to_have_text("PIM")
 
 
 def test_update_employee_details(home_page: HomePage) -> None:
-    home_page.main_menu.open_pim()
+    home_page.open_pim()
     home_page.select_employee()
     home_page.select_option(home_page.nationality_input, "Belgian")
     home_page.select_option(home_page.marital_status_input, "Married")
