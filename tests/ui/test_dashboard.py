@@ -9,7 +9,7 @@ from pages.orange_home_page import HomePage
 def home_page(page: Page, login_to_site: None):
     return HomePage(page)
 
-def test_get_main_menu_list(home_page: HomePage):
+def test_visibility_of_main_menu_list(home_page: HomePage):
     home_page.toggle_main_menu()
     expect(home_page.get_menu_list()).to_be_visible(timeout=15000)
 
@@ -22,11 +22,12 @@ def test_toggle_main_menu(home_page: HomePage):
     expect(home_page.orange_hrm_banner).to_be_visible()
 
 
-def test_main_menu_options_opening(home_page: HomePage):
+def test_correctness_of_admin_heading_title(home_page: HomePage):
     home_page.open_admin()
     expect(home_page.admin_heading).to_be_visible()
     expect(home_page.admin_heading).to_have_text(re.compile(r"Admin *"))
 
+def test_correctness_of_pim_heading_title(home_page: HomePage):
     home_page.open_pim()
     expect(home_page.pim_heading).to_have_text("PIM")
 
